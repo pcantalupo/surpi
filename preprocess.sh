@@ -18,7 +18,7 @@
 
 scriptname=${0##*/}
 
-if [ $# != 5 ]; then
+if [ $# != 6 ]; then
     echo "Usage: $scriptname <FASTQfile> <adapter_set> <S/I quality> <quality_cutoff> <entropy_cutoff> <length_cutoff; 0 for no length_cutoff>"
     exit
 fi
@@ -54,7 +54,7 @@ basef=${nopathf%.fastq}
 echo -e "$(date)\t$scriptname\t********** running cutadapt **********"
 START1=$(date +%s)
 
-cutadapt_quality.csh "$inputfile" "$quality" "$adapter_set"
+cutadapt_quality.sh "$inputfile" "$quality" "$adapter_set"
 
 END1=$(date +%s)
 diff=$(( END1 - START1 ))
@@ -75,7 +75,7 @@ prinseq-lite.pl -fastq "$basef".cutadapt.fastq \
                 -lc_method entropy -lc_threshold "$entropy_cutoff" \
                 -min_qual_mean "$quality_cutoff" -ns_max_p 5 \
                 -trim_qual_right "$quality_cutoff" -trim_qual_left "$quality_cutoff" \
-                -min_len "$length_cutoff" \
+                -min_len "$length_cutoff" -no_qual_header \
                 -out_good "$basef".cutadapt.prinseq -out_bad null
 mv -f "$basef".cutadapt.prinseq.fastq "$basef".preprocessed.fastq
 
