@@ -68,49 +68,28 @@ wait
 
 echo -e "$(date)\t$scriptname\tDone preprocessing for each chunk..."
 
-exit;
-
-
-
-
-
-
-
-
-
-
-
 nopathf2=${1##*/}
 basef2=${nopathf2%.fastq}
 
+
 rm -f $basef2.cutadapt.fastq
 rm -f $basef2.preprocessed.fastq
-rm -f $basef2*.dusted.bad.fastq
 
 for f in x??.fastq
 do
-	nopathf=${f##*/}
-	basef=${nopathf%.fastq}
-	cat $basef.preprocess.log >> $basef2.preprocess.log
-	rm -f $basef.preprocess.log
-	cat $basef.modheader.cutadapt.summary.log >> $basef2.cutadapt.summary.log
-	rm -f $basef.modheader.cutadapt.summary.log
-	cat $basef.modheader.adapterinfo.log >> $basef2.adapterinfo.log
-	rm -f $basef.modheader.adapterinfo.log
-	cat $basef.cutadapt.fastq >> $basef2.cutadapt.fastq
-	rm -f $basef.cutadapt.fastq
-	cat $basef.cutadapt.cropped.fastq.log >> $basef2.cutadapt.cropped.fastq.log
-	rm -f $basef.cutadapt.cropped.fastq.log
-	cat $basef.preprocessed.fastq >> $basef2.preprocessed.fastq
-	rm -f $basef.preprocessed.fastq
-	cat $basef.cutadapt.cropped.dusted.bad.fastq >> $basef2.cutadapt.cropped.dusted.bad.fastq
-	rm -f $basef.cutadapt.cropped.dusted.bad.fastq 
+    nopathf=${f##*/}
+    basef=${nopathf%.fastq}
+    cat $basef.cutadapt.summary.log >> $basef2.cutadapt.log
+    rm -f $basef.cutadapt.summary.log
+    cat $basef.preprocess.log >> $basef2.preprocess.log
+    rm -f $basef.preprocess.log
 
-	rm -f $f
-	rm -f $basef.modheader.fastq
-	rm -f $basef.cutadapt.summary.log
-	rm -f $basef.adapterinfo.log
-	rm -f $basef.cutadapt.cropped.fastq 
+#   cat $basef.cutadapt.fastq >> $basef2.cutadapt.fastq
+    rm -f $basef.cutadapt.fastq
+    cat $basef.preprocessed.fastq >> $basef2.preprocessed.fastq
+    rm -f $basef.preprocessed.fastq
+
+    rm -f $f
 done
 
 echo -e "$(date)\t$scriptname\tDone concatenating output..."
@@ -125,8 +104,8 @@ echo -e "$(date)\t$scriptname\tmedian CUTADAPT time per core: $avgtime1 seconds"
 
 let "avgtime2=0"
 
-let "avgtime3=`grep DUST $basef2.preprocess.log | awk '{print $12}' | sort -n | awk '{ a[i++]=$1} END {print a[int(i/2)];}'`"
-echo -e "$(date)\t$scriptname\tmedian DUST time per core: $avgtime3 seconds"
+let "avgtime3=`grep PRINSEQ $basef2.preprocess.log | awk '{print $12}' | sort -n | awk '{ a[i++]=$1} END {print a[int(i/2)];}'`"
+echo -e "$(date)\t$scriptname\tmedian PRINSEQ time per core: $avgtime3 seconds"
 
 let "totaltime = diff_SPLIT + avgtime1 + avgtime2 + avgtime3"
 echo -e "$(date)\t$scriptname\tTOTAL TIME: $totaltime seconds"
