@@ -67,4 +67,5 @@ elif [[ $adapter_set = primerb ]]; then
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 else
     echo "No adapter set selected!!!!!"
+    cp $inputfile "${inputfile%.*}".cutadapt.fastq
 fi

@@ -61,7 +61,7 @@ for f in x??
 do
     mv $f $f.fastq
     echo -e "$(date)\t$scriptname\tpreprocess.sh $f.fastq $adapter_set $quality $quality_cutoff $entropy_cutoff $length_cutoff 2>&1 | tee $f.preprocess.log &"
-    preprocess.sh $f.fastq $adapter_set $quality $quality_cutoff $entropy_cutoff $length_cutoff 2>&1 | tee $f.preprocess.log &
+    preprocess.sh $f.fastq "$adapter_set" $quality $quality_cutoff $entropy_cutoff $length_cutoff 2>&1 | tee $f.preprocess.log &
 done
 
 wait
