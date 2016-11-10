@@ -43,17 +43,24 @@ else
 fi
 
 if [[ $adapter_set = truseq ]]; then
-    cutadapt -g GTTTCCCACTGGAGGATA -a TATCCTCCAGTGGGAAAC \
-             -a AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT -g GTGACTGGAGTTCAGACGTGTGCTCTTCCGATC \
-             -a GATCGGAAGAGCACACGTCTGAACTCCAGTCAC -a AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATC \
-             -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq \
-             $inputfile #> ${inputfile%.*}.cutadapt.summary.log
+    # These are
+    #    Primer B
+    #    Illumina Adapter 1 (-a seq based on Illumina bulletin; using -g revcom similar to Surpi)
+    #             Adapter 2 (-a seq based on Illumina bulletin; using -a revcom exactly like Surpi)
+    echo Trimming Primer B + Illumina TruSeq adapters
+    cutadapt -g GTTTCCCAGTCACGATA -a TATCGTGACTGGGAAAC \
+             -g TGACTGGAGTTCAGACGTGTGCTCTTCCGATCT                         -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
+             -a AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATC -a AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT \
+             -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
+elif [[ $adapter_set = prepx ]]; then
+    # These are Primer B
+    #           Wafergen Adapter 1
+    #           Wafergen Adapter 2
+    echo Trimming Primer B + Wafergen PrepX adapters
+    cutadapt -g GTTTCCCAGTCACGATA -a TATCGTGACTGGGAAAC \
+             -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
+             -a GATCGTCGGACTGTAGAACTCTGAACGTGTAGA \
+             -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 else
     echo "No adapter set selected!!!!!"
 fi
-
-#set numreads_end = `egrep -c "@HWI|@M00|@SRR" $inputfile:r.cutadapt.fastq`
-
-#@ reads_removed = $numreads_start - $numreads_end
-#echo $reads_removed" reads removed by cutadapt" 
-#echo $numreads_end" reads at end of cutadapt"
