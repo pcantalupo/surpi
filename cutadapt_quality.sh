@@ -47,7 +47,7 @@ if [[ $adapter_set = truseq ]]; then
              -a AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT -g GTGACTGGAGTTCAGACGTGTGCTCTTCCGATC \
              -a GATCGGAAGAGCACACGTCTGAACTCCAGTCAC -a AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATC \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq \
-             $inputfile > ${inputfile%.*}.cutadapt.summary.log
+             $inputfile #> ${inputfile%.*}.cutadapt.summary.log
 else
     echo "No adapter set selected!!!!!"
 fi
