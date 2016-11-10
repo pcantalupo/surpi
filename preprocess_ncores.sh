@@ -33,7 +33,7 @@ if [ ! -f $inputfile ]; then
     exit
 fi
 
-echo -e "$(date)\t$scriptname"
+echo -e "$(date)\t$scriptname START"
 
 START=$(date +%s)
 
@@ -60,8 +60,8 @@ echo -e "$(date)\t$scriptname\tRunning preprocess script for each chunk..."
 for f in x??
 do
     mv $f $f.fastq
-    echo -e "$(date)\t$scriptname\tpreprocess.sh $f.fastq $adapter_set $quality $quality_cutoff $entropy_cutoff $length_cutoff >& $f.preprocess.log &"
-    preprocess.sh $f.fastq $adapter_set $quality $quality_cutoff $entropy_cutoff $length_cutoff >& $f.preprocess.log &
+    echo -e "$(date)\t$scriptname\tpreprocess.sh $f.fastq $adapter_set $quality $quality_cutoff $entropy_cutoff $length_cutoff | tee $f.preprocess.log &"
+    preprocess.sh $f.fastq $adapter_set $quality $quality_cutoff $entropy_cutoff $length_cutoff | tee $f.preprocess.log &
 done
 
 wait
@@ -79,8 +79,8 @@ for f in x??.fastq
 do
     nopathf=${f##*/}
     basef=${nopathf%.fastq}
-    cat $basef.cutadapt.summary.log >> $basef2.cutadapt.log
-    rm -f $basef.cutadapt.summary.log
+#    cat $basef.cutadapt.summary.log >> $basef2.cutadapt.log
+#    rm -f $basef.cutadapt.summary.log
     cat $basef.preprocess.log >> $basef2.preprocess.log
     rm -f $basef.preprocess.log
 
@@ -107,7 +107,10 @@ let "avgtime2=0"
 let "avgtime3=`grep PRINSEQ $basef2.preprocess.log | awk '{print $12}' | sort -n | awk '{ a[i++]=$1} END {print a[int(i/2)];}'`"
 echo -e "$(date)\t$scriptname\tmedian PRINSEQ time per core: $avgtime3 seconds"
 
+rm -f $basef2.preprocess.log
+
 let "totaltime = diff_SPLIT + avgtime1 + avgtime2 + avgtime3"
 echo -e "$(date)\t$scriptname\tTOTAL TIME: $totaltime seconds"
 
 echo -e "$(date)\t$scriptname\tTOTAL CLOCK TIME (INCLUDING OVERHEAD): $diff_TOTAL seconds"
+echo -e "$(date)\t$scriptname END"
