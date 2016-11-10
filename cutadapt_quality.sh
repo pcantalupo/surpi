@@ -61,6 +61,10 @@ elif [[ $adapter_set = prepx ]]; then
              -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
              -a GATCGTCGGACTGTAGAACTCTGAACGTGTAGA \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
+elif [[ $adapter_set = primerb ]]; then
+    echo Trimming Primer B
+    cutadapt -g GTTTCCCAGTCACGATA -a TATCGTGACTGGGAAAC \
+             -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 else
     echo "No adapter set selected!!!!!"
 fi
