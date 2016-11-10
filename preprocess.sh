@@ -37,13 +37,13 @@ if [[ ! -f $inputfile ]]; then
     exit
 fi
 
+echo -e "$(date)\t$scriptname START"
+
 if [[ $quality = S ]]; then
     echo -e "$(date)\t$scriptname\tselected Sanger quality"
 else
     echo -e "$(date)\t$scriptname\tselected Illumina quality"
 fi
-
-echo -e "$(date)\t$scriptname"
 
 nopathf=${1##*/}
 basef=${nopathf%.fastq}
@@ -82,3 +82,4 @@ mv -f "$basef".cutadapt.prinseq.fastq "$basef".preprocessed.fastq
 END1=$(date +%s)
 diff=$(( END1 - START1 ))
 echo -e "$(date)\t$scriptname\tDone prinseq: PRINSEQ took $diff seconds"
+echo -e "$(date)\t$scriptname END"
