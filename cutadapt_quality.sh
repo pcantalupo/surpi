@@ -47,8 +47,9 @@ if [[ $adapter_set = truseq ]]; then
     #    Primer B
     #    Illumina Adapter 1 (-a seq based on Illumina bulletin; using -g revcom similar to Surpi)
     #             Adapter 2 (-a seq based on Illumina bulletin; using -a revcom exactly like Surpi)
-    echo Trimming Primer B + Illumina TruSeq adapters
-    cutadapt -g GTTTCCCAGTCACGATA -a TATCGTGACTGGGAAAC \
+    echo "Trimming Primer B + Primer K pubmed 22855479 + Illumina TruSeq adapters"
+    cutadapt -g GTTTCCCAGTCACGATA    -a TATCGTGACTGGGAAAC \
+             -g GACCATCTAGCGACCTCCAC -a GTGGAGGTCGCTAGATGGTC \
              -g TGACTGGAGTTCAGACGTGTGCTCTTCCGATCT                         -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
              -a AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATC -a AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
@@ -56,8 +57,9 @@ elif [[ $adapter_set = prepx ]]; then
     # These are Primer B
     #           Wafergen Adapter 1
     #           Wafergen Adapter 2
-    echo Trimming Primer B + Wafergen PrepX adapters
-    cutadapt -g GTTTCCCAGTCACGATA -a TATCGTGACTGGGAAAC \
+    echo "Trimming Primer B + Primer K see above + Wafergen PrepX adapters"
+    cutadapt -g GTTTCCCAGTCACGATA    -a TATCGTGACTGGGAAAC \
+             -g GACCATCTAGCGACCTCCAC -a GTGGAGGTCGCTAGATGGTC \
              -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
              -a GATCGTCGGACTGTAGAACTCTGAACGTGTAGA \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
