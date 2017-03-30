@@ -63,6 +63,16 @@ elif [[ $adapter_set = prepx ]]; then
              -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
              -a GATCGTCGGACTGTAGAACTCTGAACGTGTAGA \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
+elif [[ $adapter_set = nextera ]]; then
+    # These are
+    #    Primer B
+    #    Sol Primer B (Chiu lab)
+    #    Nextera primers (same as Surpi)
+    echo "Trimming Primer B, Sol Primer B, and Nextera primers"
+    cutadapt -g GTTTCCCAGTCACGATA    -a TATCGTGACTGGGAAAC \
+             -g GTTTCCCACTGGAGGATA   -a TATCCTCCAGTGGGAAAC \
+             -a CTGTCTCTTATACACATCTCCGAGCCCACGAGAC -a CTGTCTCTTATACACATCTGACGCTGCCGACGA -a CTGTCTCTTATACACATCT \
+             -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 elif [[ $adapter_set = primerb ]]; then
     echo Trimming Primer B
     cutadapt -g GTTTCCCAGTCACGATA -a TATCGTGACTGGGAAAC \
