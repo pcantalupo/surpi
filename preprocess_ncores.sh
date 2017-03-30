@@ -13,8 +13,8 @@
 
 scriptname=${0##*/}
 
-if [[ $# != 7 ]]; then
-    echo "Usage: $scriptname <FASTQfile> <adapter_set> <S/I quality> <quality_cutoff> <entropy_cutoff> <length cutoff; 0 for no length cutoff> <# of cores>"
+if [[ $# != 9 ]]; then
+    echo "Usage: $scriptname <FASTQfile> <adapter_set> <S/I quality> <quality_cutoff> <entropy_cutoff> <length cutoff; 0 for no length cutoff> <# of cores> <trimleft> <trimright>"
     exit
 fi
 
@@ -26,6 +26,8 @@ quality_cutoff=$4
 entropy_cutoff=$5
 length_cutoff=$6
 cores=$7
+trim_left=${8:-0}
+trim_right=${9:-0}
 ###
 
 if [ ! -f $inputfile ]; then
@@ -61,7 +63,7 @@ for f in x??
 do
     mv $f $f.fastq
     echo -e "$(date)\t$scriptname\tpreprocess.sh $f.fastq $adapter_set $quality $quality_cutoff $entropy_cutoff $length_cutoff 2>&1 | tee $f.preprocess.log &"
-    preprocess.sh $f.fastq "$adapter_set" $quality $quality_cutoff $entropy_cutoff $length_cutoff 2>&1 | tee $f.preprocess.log &
+    preprocess.sh $f.fastq "$adapter_set" $quality $quality_cutoff $entropy_cutoff $length_cutoff $trim_left $trim_right 2>&1 | tee $f.preprocess.log &
 done
 
 wait
