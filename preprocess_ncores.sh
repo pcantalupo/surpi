@@ -62,7 +62,7 @@ echo -e "$(date)\t$scriptname\tRunning preprocess script for each chunk..."
 for f in x??
 do
     mv $f $f.fastq
-    echo -e "$(date)\t$scriptname\tpreprocess.sh $f.fastq $adapter_set $quality $quality_cutoff $entropy_cutoff $length_cutoff 2>&1 | tee $f.preprocess.log &"
+    echo -e "$(date)\t$scriptname\tpreprocess.sh $f.fastq $adapter_set $quality $quality_cutoff $entropy_cutoff $length_cutoff $trim_left $trim_right 2>&1 | tee $f.preprocess.log &"
     preprocess.sh $f.fastq "$adapter_set" $quality $quality_cutoff $entropy_cutoff $length_cutoff $trim_left $trim_right 2>&1 | tee $f.preprocess.log &
 done
 
