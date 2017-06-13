@@ -77,6 +77,19 @@ elif [[ $adapter_set = primerb ]]; then
     echo Trimming Primer B
     cutadapt -g GTTTCCCAGTCACGATA -a TATCGTGACTGGGAAAC \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
+elif [[ $adapter_set = delwart ]]; then
+    echo "Trimming Delwart Ng et al 2012 primers"
+    cutadapt -g ATCGTCGTCGTAGGCTGCTC -a GAGCAGCCTACGACGACGAT \
+             -g GTATCGCTGGACACTGGACC -a GGTCCAGTGTCCAGCGATAC \
+             -g CGCATTGGTCGGCACTTGGT -a ACCAAGTGCCGACCAATGCG \
+             -g CGTAGATAAGCGGTCGGCTC -a GAGCCGACCGCTTATCTACG \
+             -g CATCACATAGGCGTCCGCTG -a CAGCGGACGCCTATGTGATG \
+             -g CGCAGGACCTCTGATACAGG -a CCTGTATCAGAGGTCCTGCG \
+             -g CGCACTCGACTCGTAACAGG -a CCTGTTACGAGTCGAGTGCG \
+             -g CGTCCAGGCACAATCCAGTC -a GACTGGATTGTGCCTGGACG \
+             -g CCGAGGTTCAAGCGAGGTTG -a CAACCTCGCTTGAACCTCGG \
+             -g ACGGTGTGTTACCGACGTCC -a GGACGTCGGTAACACACCGT \
+             -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 else
     echo "No adapter set selected!!!!!"
     cp $inputfile "${inputfile%.*}".cutadapt.fastq
