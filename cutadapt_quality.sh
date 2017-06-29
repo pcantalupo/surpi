@@ -3,7 +3,7 @@
 # 	cutadapt_quality.sh
 #
 #	runs cutadapt to remove primer sequences from Illumina files
-#	also accepts a quality argument for Illumina / Sanger quality 
+#	also accepts a quality argument for Illumina / Sanger quality
 #	user specifies length cutoff
 #	user specifies whether short reads less than length cutoff are kept; if so, they are converted to size=1
 #
@@ -42,55 +42,47 @@ else
     qual=64
 fi
 
-if [[ $adapter_set = truseq ]]; then
-    # These are
-    #    Primer B
-    #    Illumina Adapter 1 (-a seq based on Illumina bulletin; using -g revcom similar to Surpi)
-    #             Adapter 2 (-a seq based on Illumina bulletin; using -a revcom exactly like Surpi)
-    echo "Trimming Primer B + Primer K pubmed 22855479 + Illumina TruSeq adapters"
-    cutadapt -g GTTTCCCAGTCACGATA    -a TATCGTGACTGGGAAAC \
-             -g GACCATCTAGCGACCTCCAC -a GTGGAGGTCGCTAGATGGTC \
-             -g TGACTGGAGTTCAGACGTGTGCTCTTCCGATCT                         -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
-             -a AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATC -a AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT \
-             -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
-elif [[ $adapter_set = prepx ]]; then
-    # These are Primer B
+if [[ $adapter_set = prepx ]]; then
+    # These are Primer B and Primer K
     #           Wafergen Adapter 1
     #           Wafergen Adapter 2
-    echo "Trimming Primer B + Primer K see above + Wafergen PrepX adapters"
+    echo "Trimming Wafergen PrepX adapters + others"
     cutadapt -g GTTTCCCAGTCACGATA    -a TATCGTGACTGGGAAAC \
              -g GACCATCTAGCGACCTCCAC -a GTGGAGGTCGCTAGATGGTC \
              -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
              -a GATCGTCGGACTGTAGAACTCTGAACGTGTAGA \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
-elif [[ $adapter_set = nextera ]]; then
-    # These are
-    #    Primer B
-    #    Sol Primer B (Chiu lab)
-    #    Nextera primers (same as Surpi)
-    echo "Trimming Primer B, Sol Primer B, and Nextera primers"
-    cutadapt -g GTTTCCCAGTCACGATA    -a TATCGTGACTGGGAAAC \
-             -g GTTTCCCACTGGAGGATA   -a TATCCTCCAGTGGGAAAC \
-             -a CTGTCTCTTATACACATCTCCGAGCCCACGAGAC -a CTGTCTCTTATACACATCTGACGCTGCCGACGA -a CTGTCTCTTATACACATCT \
-             -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
+elif [[ $adapter_set = delwart ]]; then
+   echo "Trimming Delwart Ng et al 2012 primers"
+   cutadapt -g ATCGTCGTCGTAGGCTGCTC -a GAGCAGCCTACGACGACGAT \
+            -g GTATCGCTGGACACTGGACC -a GGTCCAGTGTCCAGCGATAC \
+            -g CGCATTGGTCGGCACTTGGT -a ACCAAGTGCCGACCAATGCG \
+            -g CGTAGATAAGCGGTCGGCTC -a GAGCCGACCGCTTATCTACG \
+            -g CATCACATAGGCGTCCGCTG -a CAGCGGACGCCTATGTGATG \
+            -g CGCAGGACCTCTGATACAGG -a CCTGTATCAGAGGTCCTGCG \
+            -g CGCACTCGACTCGTAACAGG -a CCTGTTACGAGTCGAGTGCG \
+            -g CGTCCAGGCACAATCCAGTC -a GACTGGATTGTGCCTGGACG \
+            -g CCGAGGTTCAAGCGAGGTTG -a CAACCTCGCTTGAACCTCGG \
+            -g ACGGTGTGTTACCGACGTCC -a GGACGTCGGTAACACACCGT \
+            -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 elif [[ $adapter_set = primerb ]]; then
     echo Trimming Primer B
     cutadapt -g GTTTCCCAGTCACGATA -a TATCGTGACTGGGAAAC \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
-elif [[ $adapter_set = delwart ]]; then
-    echo "Trimming Delwart Ng et al 2012 primers"
-    cutadapt -g ATCGTCGTCGTAGGCTGCTC -a GAGCAGCCTACGACGACGAT \
-             -g GTATCGCTGGACACTGGACC -a GGTCCAGTGTCCAGCGATAC \
-             -g CGCATTGGTCGGCACTTGGT -a ACCAAGTGCCGACCAATGCG \
-             -g CGTAGATAAGCGGTCGGCTC -a GAGCCGACCGCTTATCTACG \
-             -g CATCACATAGGCGTCCGCTG -a CAGCGGACGCCTATGTGATG \
-             -g CGCAGGACCTCTGATACAGG -a CCTGTATCAGAGGTCCTGCG \
-             -g CGCACTCGACTCGTAACAGG -a CCTGTTACGAGTCGAGTGCG \
-             -g CGTCCAGGCACAATCCAGTC -a GACTGGATTGTGCCTGGACG \
-             -g CCGAGGTTCAAGCGAGGTTG -a CAACCTCGCTTGAACCTCGG \
-             -g ACGGTGTGTTACCGACGTCC -a GGACGTCGGTAACACACCGT \
-             -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 else
-    echo "No adapter set selected!!!!!"
-    cp $inputfile "${inputfile%.*}".cutadapt.fastq
+    # There are 5 sets of non-template sequence:
+    #    Primer B
+    #    Primer K (pubmed 22855479)
+    #    Sol B (same as in Surpi)
+    #    Illumina Adapter 1 (-a seq based on Illumina bulletin; using -g revcom similar to Surpi)
+    #             Adapter 2 (-a seq based on Illumina bulletin; using -a revcom exactly like Surpi)
+    #    Nextera (same as in Surpi)
+    echo "Trimming TruSeq + others (default option)"
+    cutadapt -g GTTTCCCAGTCACGATA    -a TATCGTGACTGGGAAAC \
+             -g GACCATCTAGCGACCTCCAC -a GTGGAGGTCGCTAGATGGTC \
+             -g GTTTCCCACTGGAGGATA   -a TATCCTCCAGTGGGAAAC \
+             -g TGACTGGAGTTCAGACGTGTGCTCTTCCGATCT                         -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
+             -a AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATC -a AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT \
+             -a CTGTCTCTTATACACATCTCCGAGCCCACGAGAC -a CTGTCTCTTATACACATCTGACGCTGCCGACGA -a CTGTCTCTTATACACATCT \
+             -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 fi
