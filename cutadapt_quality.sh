@@ -21,7 +21,7 @@
 # Please see license file for details.
 
 # adapteroptions is a string of cutadapt options (ex. -g GTTCAGAGTTCTACAGTCCGACGATC -a TCGTATGCCGTCTTCTGCTTG) 
-if [[ $# != 3 ]]; then
+if [[ $# != 4 ]]; then
     echo "Usage: cutadapt_quality.csh <FASTQfile> <quality S/I> <adapter_set> <adapteroptions>"
     exit
 fi
@@ -53,7 +53,7 @@ if [[ $adapter_set = prepx ]]; then
              -g GACCATCTAGCGACCTCCAC -a GTGGAGGTCGCTAGATGGTC \
              -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
              -a GATCGTCGGACTGTAGAACTCTGAACGTGTAGA \
-             "$adapteroptions" \
+             $adapteroptions \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 elif [[ $adapter_set = delwart ]]; then
    echo "Trimming Delwart Ng et al 2012 primers"
@@ -67,12 +67,12 @@ elif [[ $adapter_set = delwart ]]; then
             -g CGTCCAGGCACAATCCAGTC -a GACTGGATTGTGCCTGGACG \
             -g CCGAGGTTCAAGCGAGGTTG -a CAACCTCGCTTGAACCTCGG \
             -g ACGGTGTGTTACCGACGTCC -a GGACGTCGGTAACACACCGT \
-            "$adapteroptions" \
+            $adapteroptions \
             -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 elif [[ $adapter_set = primerb ]]; then
     echo Trimming Primer B
     cutadapt -g GTTTCCCAGTCACGATA -a TATCGTGACTGGGAAAC \
-             "$adapteroptions" \
+             $adapteroptions \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 else
     # There are 5 sets of non-template sequence:
@@ -89,6 +89,6 @@ else
              -g TGACTGGAGTTCAGACGTGTGCTCTTCCGATCT                         -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
              -a AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATC -a AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT \
              -a CTGTCTCTTATACACATCTCCGAGCCCACGAGAC -a CTGTCTCTTATACACATCTGACGCTGCCGACGA -a CTGTCTCTTATACACATCT \
-             "$adapteroptions" \
+             $adapteroptions \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 fi

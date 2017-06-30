@@ -19,7 +19,7 @@
 scriptname=${0##*/}
 
 # adapteroptions is a string of cutadapt options (ex. -g GTTCAGAGTTCTACAGTCCGACGATC -a TCGTATGCCGTCTTCTGCTTG)
-if [ $# != 8 ]; then
+if [ $# != 9 ]; then
     echo "Usage: $scriptname <FASTQfile> <adapter_set> <S/I quality> <quality_cutoff> <entropy_cutoff> <length_cutoff; 0 for no length_cutoff> <trimleft> <trimright> <adapteroptions>"
     exit
 fi
