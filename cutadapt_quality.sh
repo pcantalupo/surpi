@@ -20,8 +20,9 @@
 # SURPI has been released under a modified BSD license.
 # Please see license file for details.
 
+# adapteroptions is a string of cutadapt options (ex. -g GTTCAGAGTTCTACAGTCCGACGATC -a TCGTATGCCGTCTTCTGCTTG) 
 if [[ $# != 3 ]]; then
-    echo "Usage: cutadapt_quality.csh <FASTQfile> <quality S/I> <adapter_set>"
+    echo "Usage: cutadapt_quality.csh <FASTQfile> <quality S/I> <adapter_set> <adapteroptions>"
     exit
 fi
 
@@ -29,6 +30,7 @@ fi
 inputfile=$1
 quality=$2
 adapter_set=$3
+adapteroptions=$4
 ###
 
 #set numreads_start = `egrep -c "@HWI|@M00|@SRR" $inputfile`
@@ -51,6 +53,7 @@ if [[ $adapter_set = prepx ]]; then
              -g GACCATCTAGCGACCTCCAC -a GTGGAGGTCGCTAGATGGTC \
              -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
              -a GATCGTCGGACTGTAGAACTCTGAACGTGTAGA \
+             "$adapteroptions" \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 elif [[ $adapter_set = delwart ]]; then
    echo "Trimming Delwart Ng et al 2012 primers"
@@ -64,10 +67,12 @@ elif [[ $adapter_set = delwart ]]; then
             -g CGTCCAGGCACAATCCAGTC -a GACTGGATTGTGCCTGGACG \
             -g CCGAGGTTCAAGCGAGGTTG -a CAACCTCGCTTGAACCTCGG \
             -g ACGGTGTGTTACCGACGTCC -a GGACGTCGGTAACACACCGT \
+            "$adapteroptions" \
             -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 elif [[ $adapter_set = primerb ]]; then
     echo Trimming Primer B
     cutadapt -g GTTTCCCAGTCACGATA -a TATCGTGACTGGGAAAC \
+             "$adapteroptions" \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 else
     # There are 5 sets of non-template sequence:
@@ -84,5 +89,6 @@ else
              -g TGACTGGAGTTCAGACGTGTGCTCTTCCGATCT                         -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
              -a AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATC -a AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT \
              -a CTGTCTCTTATACACATCTCCGAGCCCACGAGAC -a CTGTCTCTTATACACATCTGACGCTGCCGACGA -a CTGTCTCTTATACACATCT \
+             "$adapteroptions" \
              -n 15 -O 5 --quality-base=$qual -o "${inputfile%.*}".cutadapt.fastq $inputfile
 fi

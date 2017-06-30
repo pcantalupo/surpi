@@ -18,8 +18,9 @@
 
 scriptname=${0##*/}
 
+# adapteroptions is a string of cutadapt options (ex. -g GTTCAGAGTTCTACAGTCCGACGATC -a TCGTATGCCGTCTTCTGCTTG)
 if [ $# != 8 ]; then
-    echo "Usage: $scriptname <FASTQfile> <adapter_set> <S/I quality> <quality_cutoff> <entropy_cutoff> <length_cutoff; 0 for no length_cutoff> <trimleft> <trimright>"
+    echo "Usage: $scriptname <FASTQfile> <adapter_set> <S/I quality> <quality_cutoff> <entropy_cutoff> <length_cutoff; 0 for no length_cutoff> <trimleft> <trimright> <adapteroptions>"
     exit
 fi
 
@@ -32,6 +33,7 @@ entropy_cutoff=$5
 length_cutoff=$6
 trim_left=${7:-0}  # default 0 
 trim_right=${8:-0} # default 0
+adapteroptions=${10:-} # default ""
 ###
 
 if [[ ! -f $inputfile ]]; then
@@ -56,7 +58,7 @@ basef=${nopathf%.fastq}
 echo -e "$(date)\t$scriptname\t********** running cutadapt **********"
 START1=$(date +%s)
 
-cutadapt_quality.sh "$inputfile" "$quality" "$adapter_set"
+cutadapt_quality.sh "$inputfile" "$quality" "$adapter_set" "$adapteroptions"
 
 END1=$(date +%s)
 diff=$(( END1 - START1 ))
